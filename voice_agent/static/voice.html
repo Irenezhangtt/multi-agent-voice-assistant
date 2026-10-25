@@ -1,15 +1,33 @@
 <!doctype html>
-<html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Voice Agent · 语音通话</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voice Agent · Live Call</title>
 <style>
-:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#253a33;background:#f3f2ed}*{box-sizing:border-box}body{margin:0}header{padding:20px 5vw;border-bottom:1px solid #dedfd5;display:flex;justify-content:space-between;gap:15px;font-size:14px}header small{color:#6c7972}main{max-width:820px;margin:auto;padding:45px 24px}h1{font-size:32px;font-weight:550;letter-spacing:-1px;margin:8px 0}p{line-height:1.8}.muted{color:#6c7972;font-size:13px}.call{text-align:center;padding:28px 0}.orb{width:120px;height:120px;background:#e2e9df;border:1px solid #b8cdbb;border-radius:50%;margin:20px auto;display:grid;place-items:center;font-size:35px}.orb.live{background:#c4dfca;box-shadow:0 0 0 12px #e3ece1}button{font:inherit;cursor:pointer;border-radius:6px;padding:11px 20px;border:1px solid #cbd4c8;background:transparent;color:#253a33}button.primary{color:white;background:#35634d;border-color:#35634d}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,a:focus-visible{outline:3px solid #8ba897;outline-offset:3px}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.status{min-height:30px;font-size:17px}#error{color:#9a4334;white-space:pre-wrap}.notice{padding:16px 20px;border-left:3px solid #b8cdbb;background:#fffefa;font-size:13px;line-height:1.8}.detail{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:30px}.detail div{border-top:1px solid #dedfd5;padding-top:14px;min-width:0}.detail p{overflow-wrap:anywhere;white-space:pre-wrap;min-height:70px}a{color:#35634d;text-underline-offset:3px}footer{font-size:12px;color:#6c7972;margin-top:28px;display:flex;gap:16px;flex-wrap:wrap}pre{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}@media(max-width:550px){main{padding-top:25px}.detail{grid-template-columns:1fr;gap:6px}h1{font-size:26px}header small{display:none}}
-</style></head>
-<body><header><strong>voice agent / 语音通话</strong><small id="engine">加载配置…</small></header><main>
-<p class="muted">CLINIC ASSISTANT · HOSTED SPEECH</p><h1>直接说出你的需求。</h1><p class="muted">预约、查询保险或请求人工。请用英文与 Agent 通话，Agent 通过扬声器用英文回复。</p>
-<div class="notice" id="configuration" role="status">正在检查语音服务…</div>
-<section class="call" aria-label="语音控制"><div class="orb" id="orb" aria-hidden="true">◉</div><div class="status" id="status" aria-live="polite">尚未连接</div><p class="muted" id="timer">00:00</p><div class="actions"><button class="primary" id="start" disabled>开始 / 继续语音</button><button id="interrupt" disabled>停止回复</button><button id="stop" disabled>暂停通话</button><button id="new-call">新建通话</button></div><p id="error" role="alert"></p></section>
-<div class="detail"><div><small class="muted">正在识别 / 最近一句</small><p id="transcript" aria-live="polite">开始通话后直接讲话。</p></div><div><small class="muted">Agent 最近回复</small><p id="reply" aria-live="polite">回复会合成为声音播放。</p></div></div>
-<p class="muted">预约保存至本地 SQL 数据库，以电话号码识别客户；保险使用演示规则。请使用虚构信息。麦克风音频发送至 Deepgram，转写及必要上下文在 Claude 模式下发送至 Anthropic。当前入口是浏览器语音，电话网关尚未接入，转人工仅记录 human escalation。建议使用耳机。</p>
-<details><summary class="muted">执行状态与 Trace</summary><pre id="trace">等待语音输入</pre></details>
-<footer><a href="/debug">文字调试</a><a href="/docs">API 文档</a><button id="refresh">重新检查配置</button><span id="call-id"></span></footer>
-</main><script src="/assets/voice.js" defer></script></body></html>
+:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172b4d;background:#f4f8ff}
+*{box-sizing:border-box}body{margin:0}header{padding:20px 5vw;border-bottom:1px solid #dbe7f5;background:#fff;display:flex;justify-content:space-between;gap:15px;font-size:14px}header strong{color:#1d4ed8}header small{color:#526782}main{max-width:900px;margin:auto;padding:40px 24px}h1{font-size:clamp(30px,4vw,40px);font-weight:600;letter-spacing:-1.2px;margin:8px 0}p{line-height:1.8}.muted{color:#526782;font-size:13px}.eyebrow{color:#2563eb;font-size:11px;font-weight:650;letter-spacing:1.8px}.call{text-align:center;padding:24px 16px;margin-top:20px;background:#fff;border:1px solid #dbe7f5;border-radius:16px;box-shadow:0 8px 30px #1d4ed808}.orb{width:116px;height:116px;background:#eff6ff;color:#2563eb;border:1px solid #bfd5fb;border-radius:50%;margin:20px auto;display:grid;place-items:center;font-size:35px}.orb.live{background:#dbeafe;box-shadow:0 0 0 12px #eff6ff}button{font:inherit;cursor:pointer;border-radius:8px;padding:11px 18px;border:1px solid #c9d9ee;background:#fff;color:#24446d;transition:background .15s,border-color .15s}button:hover:not(:disabled){background:#eff6ff;border-color:#93b9f5}button.primary{color:#fff;background:#2563eb;border-color:#2563eb}button.primary:hover:not(:disabled){background:#1d4ed8;border-color:#1d4ed8}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.status{min-height:30px;font-size:17px;font-weight:550}#error{color:#b42318;white-space:pre-wrap;margin-bottom:0}.notice{padding:14px 18px;border:1px solid #dbe7f5;border-left:3px solid #2563eb;border-radius:8px;background:#fff;font-size:13px;line-height:1.8}.detail{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}.detail>div{border:1px solid #dbe7f5;border-radius:12px;background:#fff;padding:18px;min-width:0}.detail small{font-size:11px;letter-spacing:1px;text-transform:uppercase}.detail p{overflow-wrap:anywhere;white-space:pre-wrap;min-height:54px;margin-bottom:0}a{color:#1d4ed8;text-underline-offset:3px}footer{font-size:12px;color:#526782;margin-top:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}footer button{padding:7px 12px;font-size:12px}details{border-top:1px solid #dbe7f5;padding-top:16px}summary{cursor:pointer}pre{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}@media(max-width:550px){main{padding:24px 16px}.detail{grid-template-columns:1fr;gap:12px}header small{display:none}.call{padding:20px 12px}.actions{gap:8px}.actions button{padding:10px 12px;font-size:13px}}
+</style>
+</head>
+<body>
+<header><strong>voice agent / live call</strong><small id="engine">Loading configuration…</small></header>
+<main>
+<p class="eyebrow">CLINIC ASSISTANT · LIVE VOICE</p>
+<h1>Tell us how we can help.</h1>
+<p class="muted">Book an appointment, check demo insurance, or request a human. Speak English and hear the assistant respond in real time.</p>
+<div class="notice" id="configuration" role="status">Checking voice availability…</div>
+<section class="call" aria-label="Voice controls">
+<div class="orb" id="orb" aria-hidden="true">◉</div>
+<div class="status" id="status" aria-live="polite">Ready when you are</div>
+<p class="muted" id="timer">00:00</p>
+<div class="actions"><button class="primary" id="start" disabled>Start / resume voice</button><button id="interrupt" disabled>Stop reply</button><button id="stop" disabled>Pause call</button><button id="new-call">New call</button></div>
+<p id="error" role="alert"></p>
+</section>
+<div class="detail"><div><small class="muted">Live transcript</small><p id="transcript" aria-live="polite">Your words will appear here.</p></div><div><small class="muted">Assistant response</small><p id="reply" aria-live="polite">Listen to the reply and follow along here.</p></div></div>
+<p class="muted">Demo workspace: use fictional names and phone numbers. Audio is sent to Deepgram; transcripts and necessary context are sent to Anthropic in Claude mode. Appointments are stored locally, insurance uses demo rules, and human requests are recorded without connecting a live operator. Headphones recommended.</p>
+<details><summary class="muted">Execution details &amp; trace</summary><pre id="trace">Waiting for voice input.</pre></details>
+<footer><a href="/debug">Text debugger</a><a href="/docs">API documentation</a><button id="refresh">Check connection</button><span id="call-id"></span></footer>
+</main>
+<script src="/assets/voice.js" defer></script>
+</body>
+</html>

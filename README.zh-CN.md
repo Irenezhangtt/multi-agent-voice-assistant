@@ -29,7 +29,7 @@ bash scripts/setup.sh
 bash scripts/start.sh
 ```
 
-打开 <http://127.0.0.1:8765>，点击开始语音并允许麦克风。文字调试：<http://127.0.0.1:8765/debug>；API 文档：<http://127.0.0.1:8765/docs>。
+打开 <http://127.0.0.1:8765>，点击 **Start / resume voice** 并允许麦克风。语音页和文字调试页均为英文、蓝白配色。文字调试：<http://127.0.0.1:8765/debug>；API 文档：<http://127.0.0.1:8765/docs>。
 
 在本机 `.env` 配置（不要把 Key 放进聊天或 Git）：
 

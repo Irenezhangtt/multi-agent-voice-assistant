@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Voice Agent · 本地开发台</title>
+  <title>Voice Agent · Text Debugger</title>
   <style>
-    :root { color-scheme: light; --bg:#f3f2ed; --paper:#fffefa; --ink:#253a33; --muted:#6c7972; --line:#dedfd5; --green:#35634d; --soft:#e8ede4; }
+    :root { color-scheme: light; --bg:#f4f8ff; --paper:#ffffff; --ink:#172b4d; --muted:#526782; --line:#dbe7f5; --blue:#2563eb; --soft:#eff6ff; }
     * { box-sizing:border-box; }
     body { margin:0; font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); }
     button,input { font:inherit; }
     button { cursor:pointer; }
     button:disabled { opacity:.5; cursor:wait; }
-    button:focus-visible,input:focus-visible,a:focus-visible { outline:3px solid #8ba897; outline-offset:3px; }
-    header { border-bottom:1px solid var(--line); padding:20px 5vw; display:flex; justify-content:space-between; gap:18px; align-items:center; }
+    button:focus-visible,input:focus-visible,a:focus-visible { outline:3px solid #93c5fd; outline-offset:3px; }
+    header { background:#fff; border-bottom:1px solid var(--line); padding:20px 5vw; display:flex; justify-content:space-between; gap:18px; align-items:center; }
     .brand { font-size:18px; font-weight:650; letter-spacing:-.5px; }
     .brand span { color:var(--muted); font-size:12px; font-weight:450; letter-spacing:1px; margin-left:12px; }
     .mode { font-size:12px; border:1px solid var(--line); border-radius:20px; padding:4px 12px; }
@@ -38,7 +38,7 @@
     .example { background:transparent; border:1px solid var(--line); color:var(--muted); padding:4px 10px; font-size:12px; border-radius:20px; }
     form { display:flex; gap:9px; }
     input { min-width:0; flex:1; padding:11px 12px; border:1px solid var(--line); border-radius:6px; color:var(--ink); background:white; }
-    .send { border:0; border-radius:6px; color:white; background:var(--green); padding:10px 20px; }
+    .send { border:0; border-radius:6px; color:white; background:var(--blue); padding:10px 20px; }
     .hint { font-size:11px; color:var(--muted); margin:9px 0 0; }
     .side { display:flex; flex-direction:column; gap:18px; min-width:0; }
     .framework { padding:20px; }
@@ -46,7 +46,7 @@
     .connector { text-align:center; color:var(--muted); font-size:18px; line-height:30px; }
     .workflows { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
     .workflow { text-align:center; border:1px solid var(--line); padding:9px 3px; border-radius:5px; font-size:12px; }
-    .workflow.active { border-color:var(--green); background:var(--soft); font-weight:600; }
+    .workflow.active { border-color:var(--blue); background:var(--soft); font-weight:600; }
     dl { margin:18px 0 0; font-size:12px; }
     dl div { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding:7px 0; }
     dt { color:var(--muted); }
@@ -57,53 +57,53 @@
     details { margin:0 20px 18px; font-size:12px; }
     summary { cursor:pointer; color:var(--muted); }
     pre { max-height:260px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; font-size:11px; }
-    .error { padding:0 20px; color:#a34b3a; font-size:13px; }
+    .error { padding:0 20px; color:#b42318; font-size:13px; }
     footer { margin-top:23px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:var(--muted); font-size:11px; }
-    a { color:var(--green); text-underline-offset:3px; }
+    a { color:var(--blue); text-underline-offset:3px; }
     @media(max-width:800px) { .layout { grid-template-columns:1fr; } .intro { align-items:start; } .chat { height:380px; } main { padding-top:24px; } }
     @media(max-width:430px) { .brand span { display:none; } .intro { flex-direction:column; gap:14px; } .message { max-width:100%; } .send { padding:10px 13px; } input { font-size:16px; } }
   </style>
 </head>
 <body>
-<header><div class="brand">voice agent<span>FOUNDATION / 01</span></div><div class="mode" id="mode">连接中</div></header>
+<header><div class="brand">voice agent<span>TEXT DEBUGGER</span></div><div class="mode" id="mode">Connecting…</div></header>
 <main>
-  <div class="intro"><div><p class="eyebrow">Clinic assistant · local workspace</p><h1>从一段对话，走完一条流程。</h1><p class="subtitle">预约、保险、转人工。观察每一步决策与实际执行结果。</p></div><button class="quiet" id="new-call">新建测试电话 ↗</button></div>
+  <div class="intro"><div><p class="eyebrow">Clinic assistant · local workspace</p><h1>A conversation. A clear next step.</h1><p class="subtitle">Test appointments, demo insurance, and human escalation. Follow each decision and its verified result.</p></div><button class="quiet" id="new-call">New test call ↗</button></div>
   <div class="layout">
-    <section class="panel" aria-label="对话测试">
-      <div class="panel-title"><span>通话模拟 · 文字输入</span><small id="call-label">等待建立会话</small></div>
-      <div class="chat" id="chat" role="log" aria-label="对话记录" aria-live="polite"></div>
+    <section class="panel" aria-label="Conversation test">
+      <div class="panel-title"><span>Call simulator · Text input</span><small id="call-label">Waiting for a session</small></div>
+      <div class="chat" id="chat" role="log" aria-label="Conversation history" aria-live="polite"></div>
       <p class="error" id="error" role="alert"></p>
       <div class="composer">
-        <div class="examples"><button class="example" data-example="booking">预约洗牙</button><button class="example" data-example="insurance">查保险</button><button class="example" data-example="combined">预约 + 保险</button><button class="example" data-example="confirm">确认预约</button><button class="example" data-example="handoff">转人工</button></div>
-        <form id="form"><label for="message" hidden>输入测试消息</label><input id="message" placeholder="输入你的需求…" autocomplete="off" maxlength="2000" required><button class="send" id="send" type="submit">发送 ↑</button></form>
-        <p class="hint">预约使用本地 SQL；保险使用演示规则。请使用虚构电话和姓名；转人工仅记录 human escalation。</p>
+        <div class="examples"><button class="example" data-example="booking">Book a cleaning</button><button class="example" data-example="insurance">Check insurance</button><button class="example" data-example="combined">Booking + insurance</button><button class="example" data-example="confirm">Confirm booking</button><button class="example" data-example="handoff">Human escalation</button></div>
+        <form id="form"><label for="message" hidden>Enter a test message</label><input id="message" placeholder="How can we help?" autocomplete="off" maxlength="2000" required><button class="send" id="send" type="submit">Send ↑</button></form>
+        <p class="hint">Demo workspace: use fictional names and phone numbers. Appointments use local SQL; insurance uses demo rules. Human escalation records a request without connecting an operator.</p>
       </div>
     </section>
     <aside class="side">
-      <section class="panel" aria-label="框架与状态"><div class="panel-title"><span>运行中的框架</span><small>LangGraph</small></div>
-        <div class="framework"><div class="orchestrator" id="router-label">Orchestrator · 意图与状态</div><div class="connector" aria-hidden="true">↓</div><div class="workflows"><div class="workflow" data-workflow="booking">预约</div><div class="workflow" data-workflow="insurance">保险</div><div class="workflow" data-workflow="handoff">转人工</div></div>
-          <dl><div><dt>当前状态</dt><dd id="status">—</dd></div><div><dt>业务接口</dt><dd>Local SQL / Demo RAG</dd></div><div><dt>预约结果</dt><dd id="booking-result">尚未创建</dd></div><div><dt>本轮耗时</dt><dd id="latency">—</dd></div></dl>
+      <section class="panel" aria-label="Architecture and state"><div class="panel-title"><span>Live architecture</span><small>LangGraph</small></div>
+        <div class="framework"><div class="orchestrator" id="router-label">Orchestrator · Intent and state</div><div class="connector" aria-hidden="true">↓</div><div class="workflows"><div class="workflow" data-workflow="booking">Booking</div><div class="workflow" data-workflow="insurance">Insurance</div><div class="workflow" data-workflow="handoff">Human escalation</div></div>
+          <dl><div><dt>Current status</dt><dd id="status">—</dd></div><div><dt>Business backend</dt><dd>Local SQL / Demo RAG</dd></div><div><dt>Appointment reference</dt><dd id="booking-result">Not created</dd></div><div><dt>Turn latency</dt><dd id="latency">—</dd></div></dl>
         </div>
       </section>
-      <section class="panel" aria-label="本轮执行路径"><div class="panel-title"><span>执行轨迹</span><small id="trace-label">TRACE</small></div><div class="trace" id="trace"><span class="empty">发送消息后，查看路由与工具调用。</span></div><details><summary>查看完整状态与业务结果</summary><pre id="state">{}</pre></details></section>
+      <section class="panel" aria-label="Current execution path"><div class="panel-title"><span>Execution trace</span><small id="trace-label">TRACE</small></div><div class="trace" id="trace"><span class="empty">Send a message to inspect routing and tool calls.</span></div><details><summary>View full state and business results</summary><pre id="state">{}</pre></details></section>
     </aside>
   </div>
-  <footer><span>Claude API · LangChain · LangGraph · Eval scaffold</span><span><a href="/docs" target="_blank" rel="noreferrer">API 文档 ↗</a> · <a href="/api/framework" target="_blank" rel="noreferrer">Graph 定义 ↗</a></span></footer>
+  <footer><span>Claude API · LangChain · LangGraph · Eval scaffold</span><span><a href="/docs" target="_blank" rel="noreferrer">API documentation ↗</a> · <a href="/api/framework" target="_blank" rel="noreferrer">Graph definition ↗</a></span></footer>
 </main>
 <script>
   const $ = id => document.getElementById(id);
   let callId = null, busy = false, health = null, pending = null;
-  const statusLabels = {ready:'准备就绪',needs_information:'等待补充信息',awaiting_confirmation:'等待用户确认',completed:'任务完成',cancelled:'待提交预约已放弃',unknown:'结果待核验',tool_error:'工具调用失败',model_error:'模型服务不可用',human_escalation:'已标记人工处理'};
+  const statusLabels = {ready:'Ready',needs_information:'Needs information',awaiting_confirmation:'Awaiting confirmation',completed:'Completed',cancelled:'Pending offer discarded',unknown:'Result unverified',tool_error:'Tool call failed',model_error:'Model unavailable',human_escalation:'Marked for human escalation'};
   async function api(path, options={}) {
     const response = await fetch(path, {...options, headers:{'Content-Type':'application/json', ...options.headers}});
     const body = await response.json();
-    if (!response.ok) throw new Error(typeof body.detail === 'string' ? body.detail : '请求失败，请检查输入后重试');
+    if (!response.ok) throw new Error(typeof body.detail === 'string' && !/[\u3400-\u9fff]/.test(body.detail) ? body.detail : `Request failed (HTTP ${response.status}). Start a new call or check the service log.`);
     return body;
   }
   function setBusy(value) {
     busy=value; $('form').setAttribute('aria-busy',String(value));
     document.querySelectorAll('button').forEach(b=>b.disabled=value);
-    $('message').disabled=value; $('send').textContent=value?'处理中…':'发送 ↑';
+    $('message').disabled=value; $('send').textContent=value?'Working…':'Send ↑';
   }
   function message(role, content) {
     const row=document.createElement('div'); row.className='message '+role;
@@ -114,7 +114,7 @@
   function render(state, data={}) {
     $('status').textContent=statusLabels[state.status]||state.status;
     $('call-label').textContent='CALL / '+state.call_id.slice(0,8);
-    $('booking-result').textContent=state.booking?.id||'尚未创建';
+    $('booking-result').textContent=state.booking?.id||'Not created';
     $('latency').textContent=data.duration_ms!==undefined?data.duration_ms+' ms':'—';
     document.querySelectorAll('[data-workflow]').forEach(e=>e.classList.toggle('active',e.dataset.workflow===(state.active_workflow||state.route)));
     $('state').textContent=JSON.stringify({state, outcomes:data.outcomes||null},null,2);
@@ -123,10 +123,10 @@
     for(const event of events) {
       const row=document.createElement('div'); row.className='trace-row';
       const name=document.createElement('span'); name.textContent=event.node;
-      const result=document.createElement('span'); result.textContent=event.route||event.result?.status||event.status||'执行';
+      const result=document.createElement('span'); result.textContent=event.route||event.result?.status||event.status||'Executed';
       row.append(name,result); $('trace').append(row);
     }
-    if(!events.length) $('trace').textContent='发送消息后，查看路由与工具调用。';
+    if(!events.length) $('trace').textContent='Send a message to inspect routing and tool calls.';
     $('trace-label').textContent=data.trace_id?'# '+data.trace_id.slice(0,8):'TRACE';
   }
   async function newCall() {
@@ -138,8 +138,8 @@
   document.querySelectorAll('[data-example]').forEach(button=>button.addEventListener('click',()=>{
     const tomorrow=new Date(Date.now()+86400000);
     const date=new Intl.DateTimeFormat('en-CA',{timeZone:health?.timezone||'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(tomorrow);
-    const booking=`预约洗牙，姓名：小林，电话：2025550100，${date} 14:00`;
-    const samples={booking,insurance:'查保险：Aetna，会员号：DEMO123，洗牙',combined:booking+'，也查保险：Aetna，会员号：DEMO123，洗牙',confirm:'确认预约',handoff:'转人工'};
+    const booking=`Book a cleaning for Alex, phone 2025550100, on ${date} at 14:00`;
+    const samples={booking,insurance:'Check Aetna insurance, member ID DEMO123, service cleaning',combined:booking+'. Also check Aetna insurance, member ID DEMO123, service cleaning.',confirm:'Confirm booking.',handoff:'I would like to speak to a human.'};
     $('message').value=samples[button.dataset.example]; $('message').focus();
   }));
   $('form').addEventListener('submit',async event=>{
@@ -152,13 +152,13 @@
       message('user',text); message('assistant',data.state.reply); render(data.state,data);
       $('message').value=''; pending=null;
       const snapshot=await api(`/api/calls/${callId}`); $('state').textContent=JSON.stringify({state:snapshot.state,outcomes:snapshot.outcomes},null,2);
-    } catch(error) { $('error').textContent=error.message+'；如遇网络问题，可原样重试。'; }
+    } catch(error) { $('error').textContent=error.message+' If the connection failed, retry the same message.'; }
     finally {setBusy(false);$('message').focus();}
   });
   async function start() {
     setBusy(true);
     try {
-      health=await api('/health'); $('mode').textContent=health.mode==='claude'?'CLAUDE / API':'MOCK / 离线模式';
+      health=await api('/health'); $('mode').textContent=health.mode==='claude'?'CLAUDE / API':'MOCK / OFFLINE';
       $('router-label').textContent=health.mode==='claude'?'Claude → Orchestrator':'Mock → Orchestrator';
       const saved=localStorage.getItem('voice-agent-call');
       if(saved) {
@@ -169,7 +169,7 @@
           render(data.state,data);
         } catch { await newCall(); }
       } else await newCall();
-    } catch(e) { $('error').textContent='服务连接失败：'+e.message; }
+    } catch(e) { $('error').textContent='Could not connect to the service: '+e.message; }
     finally {setBusy(false);}
   }
   start();

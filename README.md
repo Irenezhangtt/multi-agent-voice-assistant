@@ -15,7 +15,7 @@ The engineering focus is **reliable execution under interruption**: independent 
 
 ![Browser voice interface](docs/assets/voice-demo.png)
 
-*Current local voice interface. The UI is in Chinese; spoken conversations and agent replies are in English. This screenshot shows the idle interface, not an active call.*
+*English voice interface with a blue-and-white theme. Spoken conversations and agent replies are in English. This screenshot shows the idle interface, not an active call.*
 
 ## What it does
 
