@@ -1,0 +1,26 @@
+.venv/
+.harbor-venv/
+.tau-venv/
+.benchmarks/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+!.env.example
+data/
+reports/
+.DS_Store
+*.egg-info/
+dist/
+build/
+recordings/
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.pem
+*.key
+# Historical UI captures predate the current Deepgram implementation.
+docs/voice-preview.png
+docs/local-preview.png

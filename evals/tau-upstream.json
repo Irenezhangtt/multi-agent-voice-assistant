@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/sierra-research/tau2-bench.git",
+  "commit": "0c69df456a96aa76a1162591574dad9c427a34d7",
+  "package": "tau2",
+  "version": "2.0.0",
+  "license": "MIT",
+  "scope": "Official text orchestrator, UserSimulator and EnvironmentEvaluator; project-authored clinic domain, not an official released benchmark score"
+}

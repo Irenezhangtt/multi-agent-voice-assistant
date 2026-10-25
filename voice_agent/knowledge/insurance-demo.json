@@ -1,0 +1,9 @@
+{
+  "version": "insurance-demo-v1",
+  "demo_only": true,
+  "documents": [
+    {"id": "demo-aetna-rule", "kind": "policy", "payer": "Aetna", "services": ["cleaning", "consultation"], "text": "FICTIONAL DEMO POLICY. Demo Aetna accepts cleaning and consultation for members whose supplied demo enrollment record is active. An inactive enrollment is ineligible. Missing enrollment or an unsupported service means eligibility is unknown. This is not a real Aetna policy and does not guarantee payment."},
+    {"id": "demo-member-active", "kind": "enrollment", "payer": "Aetna", "member_id": "DEMO123", "enrollment_status": "active", "text": "FICTIONAL DEMO ENROLLMENT. Aetna member DEMO123 has active demo enrollment. No real insurer verification has been performed."},
+    {"id": "demo-member-expired", "kind": "enrollment", "payer": "Aetna", "member_id": "EXPIRED", "enrollment_status": "inactive", "text": "FICTIONAL DEMO ENROLLMENT. Aetna member EXPIRED has inactive demo enrollment. No real insurer verification has been performed."}
+  ]
+}

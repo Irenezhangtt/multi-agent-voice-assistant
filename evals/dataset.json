@@ -1,0 +1,517 @@
+{
+  "version": "clinic-local-sql-rag-v3",
+  "now": "2026-10-23T09:00:00-07:00",
+  "cases": [
+    {
+      "id": "booking-confirmed",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "route": "booking",
+            "status": "awaiting_confirmation",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_date": "2026-11-03",
+            "tool_present": [
+              "get_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "booking-missing-fields",
+      "turns": [
+        {
+          "message": "我要预约",
+          "expected": {
+            "route": "booking",
+            "status": "needs_information",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "confirmation-without-offer",
+      "turns": [
+        {
+          "message": "确认预约",
+          "expected": {
+            "status": "needs_information",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "invalid-date",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-02-30 14:00，电话：2025550100",
+          "expected": {
+            "status": "needs_information",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking",
+              "search_availability"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "past-date",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-10-01 14:00，电话：2025550100",
+          "expected": {
+            "status": "needs_information",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "unavailable-slot",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 12:00，电话：2025550100",
+          "expected": {
+            "status": "needs_information",
+            "booking_count": 0,
+            "reply_contains": [
+              "unavailable"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "changed-date-needs-new-confirmation",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "改成 2026-11-04 15:00",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0,
+            "reply_contains": [
+              "2026-11-04"
+            ]
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_date": "2026-11-04"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cancel-pending",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "不要预约了",
+          "expected": {
+            "status": "cancelled",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "insurance-active",
+      "turns": [
+        {
+          "message": "查保险：Aetna，会员号：DEMO123，洗牙",
+          "expected": {
+            "route": "insurance",
+            "insurance_status": "active",
+            "reply_contains": [
+              "does not guarantee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "insurance-inactive",
+      "turns": [
+        {
+          "message": "查保险：Aetna，会员号：EXPIRED，洗牙",
+          "expected": {
+            "insurance_status": "inactive"
+          }
+        }
+      ]
+    },
+    {
+      "id": "insurance-unknown",
+      "turns": [
+        {
+          "message": "查保险：Other，会员号：ANY123，洗牙",
+          "expected": {
+            "insurance_status": "unknown",
+            "reply_contains": [
+              "cannot be treated as active"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "insurance-missing",
+      "turns": [
+        {
+          "message": "查保险",
+          "expected": {
+            "status": "needs_information",
+            "tool_absent": [
+              "check_insurance"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "insurance-timeout",
+      "faults": {
+        "insurance": "timeout"
+      },
+      "turns": [
+        {
+          "message": "查保险：Aetna，会员号：DEMO123，洗牙",
+          "expected": {
+            "status": "tool_error",
+            "insurance_status": "timeout"
+          }
+        }
+      ]
+    },
+    {
+      "id": "insurance-then-resume-booking",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "先查保险：Aetna，会员号：DEMO123，洗牙",
+          "expected": {
+            "route": "insurance",
+            "insurance_status": "active",
+            "status": "awaiting_confirmation",
+            "booking_count": 0,
+            "reply_contains": [
+              "2026-11-03"
+            ]
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "booking_count": 1,
+            "status": "completed"
+          }
+        }
+      ]
+    },
+    {
+      "id": "multi-intent",
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，也查保险：Aetna，会员号：DEMO123，电话：2025550100，洗牙",
+          "expected": {
+            "route": "insurance",
+            "insurance_status": "active",
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "turns": [
+        {
+          "message": "转人工",
+          "expected": {
+            "route": "handoff",
+            "status": "human_escalation",
+            "handoff_status": "human_escalation",
+            "reply_contains": [
+              "human escalation"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "human-escalation-idempotent",
+      "turns": [
+        {
+          "message": "转人工",
+          "expected": {
+            "status": "human_escalation",
+            "handoff_status": "human_escalation",
+            "reply_contains": [
+              "human escalation"
+            ]
+          }
+        },
+        {
+          "message": "转人工",
+          "expected": {
+            "status": "human_escalation",
+            "handoff_status": "human_escalation",
+            "tool_absent": [
+              "transfer_call"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "write-timeout-after-commit",
+      "faults": {
+        "create_booking": "timeout_after_commit"
+      },
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "tool_present": [
+              "get_booking"
+            ]
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "booking_count": 1,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "write-timeout-before-commit",
+      "faults": {
+        "create_booking": "timeout_before_commit"
+      },
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "status": "unknown",
+            "booking_count": 0,
+            "reply_contains": [
+              "unconfirmed"
+            ]
+          }
+        },
+        {
+          "message": "确认预约",
+          "expected": {
+            "status": "unknown",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "availability-timeout",
+      "faults": {
+        "availability": "timeout"
+      },
+      "turns": [
+        {
+          "message": "预约洗牙，姓名：小林，2026-11-03 14:00，电话：2025550100",
+          "expected": {
+            "status": "tool_error",
+            "booking_count": 0,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "sql-modify-existing",
+      "turns": [
+        {
+          "message": "Book a cleaning, name: Alex, 2026-11-03 14:00, phone: 2025550100",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "Confirm booking.",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_status": "confirmed"
+          }
+        },
+        {
+          "message": "Reschedule my appointment to 2026-11-04 15:00",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_date": "2026-11-03"
+          }
+        },
+        {
+          "message": "Confirm change.",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_date": "2026-11-04",
+            "booking_status": "modified",
+            "active_booking_count": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "sql-cancel-existing",
+      "turns": [
+        {
+          "message": "Book a cleaning, name: Alex, 2026-11-03 14:00, phone: 2025550100",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "Confirm booking.",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_status": "confirmed"
+          }
+        },
+        {
+          "message": "Cancel my appointment.",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "active_booking_count": 1
+          }
+        },
+        {
+          "message": "Confirm cancellation.",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_status": "cancel",
+            "active_booking_count": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "sql-customer-dedup",
+      "turns": [
+        {
+          "message": "Book a cleaning, name: Alex, 2026-11-03 14:00, phone: 2025550100",
+          "expected": {
+            "status": "awaiting_confirmation",
+            "booking_count": 0
+          }
+        },
+        {
+          "message": "Confirm booking.",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "booking_status": "confirmed"
+          }
+        },
+        {
+          "message": "Book a cleaning, name: Alex, 2026-11-03 14:00, phone: +1 202 555 0100",
+          "expected": {
+            "status": "completed",
+            "booking_count": 1,
+            "tool_absent": [
+              "create_booking"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rag-missing-enrollment",
+      "turns": [
+        {
+          "message": "Check insurance: Aetna, member ID: UNKNOWN123, cleaning",
+          "expected": {
+            "status": "completed",
+            "insurance_status": "unknown"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "version": "tau-clinic-v1",
+  "domain": "clinic_local",
+  "official_task_set": false,
+  "now": "2026-10-24T09:00:00-07:00",
+  "cases": [
+    {
+      "id": "clinic-create",
+      "instructions": "Your fictional name is Alex. Your phone number is 2025550199. You want a cleaning appointment on November 3, 2026 at 2 PM, America/Los_Angeles. Book it and confirm after reviewing the details. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 1,
+        "mutation_actions": [
+          "create"
+        ],
+        "handoff_count": 0,
+        "booking": {
+          "customer_phone": "+12025550199",
+          "patient_name": "Alex",
+          "service": "cleaning",
+          "date": "2026-11-03",
+          "time": "14:00",
+          "status": "confirmed",
+          "revision": 1
+        }
+      }
+    },
+    {
+      "id": "clinic-modify",
+      "seed_booking": {
+        "customer_phone": "+12025550199",
+        "patient_name": "Alex",
+        "service": "cleaning",
+        "date": "2026-11-03",
+        "time": "14:00"
+      },
+      "instructions": "Your fictional name is Alex. Your phone number is 2025550199. You already have a cleaning appointment on November 3, 2026 at 2 PM. Move that same appointment to November 4, 2026 at 3 PM, America/Los_Angeles, and confirm the modification after its review. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 1,
+        "mutation_actions": [
+          "create",
+          "modify"
+        ],
+        "handoff_count": 0,
+        "booking": {
+          "customer_phone": "+12025550199",
+          "patient_name": "Alex",
+          "service": "cleaning",
+          "date": "2026-11-04",
+          "time": "15:00",
+          "status": "modified",
+          "revision": 2
+        },
+        "preserve_seed_id": true
+      }
+    },
+    {
+      "id": "clinic-cancel",
+      "seed_booking": {
+        "customer_phone": "+12025550199",
+        "patient_name": "Alex",
+        "service": "cleaning",
+        "date": "2026-11-03",
+        "time": "14:00"
+      },
+      "instructions": "Your fictional name is Alex. Your phone number is 2025550199. You have a cleaning appointment on November 3, 2026 at 2 PM. Cancel it and explicitly confirm cancellation after its review. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 1,
+        "mutation_actions": [
+          "create",
+          "cancel"
+        ],
+        "handoff_count": 0,
+        "booking": {
+          "customer_phone": "+12025550199",
+          "patient_name": "Alex",
+          "service": "cleaning",
+          "date": "2026-11-03",
+          "time": "14:00",
+          "status": "cancel",
+          "revision": 2
+        },
+        "preserve_seed_id": true
+      }
+    },
+    {
+      "id": "clinic-insurance-active",
+      "instructions": "Check demo insurance eligibility for Aetna, member ID DEMO123, service cleaning. You understand this is fictional demo evidence, not real coverage verification. Do not request an appointment or human help. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 0,
+        "mutation_actions": [],
+        "handoff_count": 0,
+        "insurance_status": "active",
+        "insurance_citations": [
+          "demo-aetna-rule",
+          "demo-member-active"
+        ]
+      }
+    },
+    {
+      "id": "clinic-insurance-unknown",
+      "instructions": "Check demo insurance eligibility for Aetna, member ID MISSING999, service cleaning. You understand this is fictional demo evidence. Accept unknown eligibility if evidence is missing. Do not request an appointment or human help. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 0,
+        "mutation_actions": [],
+        "handoff_count": 0,
+        "insurance_status": "unknown"
+      }
+    },
+    {
+      "id": "clinic-handoff",
+      "instructions": "You want your request marked for human escalation. Ask clearly for a human. You know the demo cannot actually transfer a phone call or schedule a callback; a saved human escalation marker is your goal. Do not request booking or insurance. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 0,
+        "mutation_actions": [],
+        "handoff_count": 1
+      }
+    },
+    {
+      "id": "clinic-compound",
+      "instructions": "Your fictional name is Alex. Your phone number is 2025550199. You want a cleaning appointment on November 3, 2026 at 2 PM, America/Los_Angeles. Also check fictional Aetna insurance eligibility for member DEMO123, service cleaning. Both goals matter. Confirm the appointment only after seeing its review summary. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 1,
+        "mutation_actions": [
+          "create"
+        ],
+        "handoff_count": 0,
+        "booking": {
+          "customer_phone": "+12025550199",
+          "patient_name": "Alex",
+          "service": "cleaning",
+          "date": "2026-11-03",
+          "time": "14:00",
+          "status": "confirmed",
+          "revision": 1
+        },
+        "insurance_status": "active",
+        "insurance_citations": [
+          "demo-aetna-rule",
+          "demo-member-active"
+        ]
+      }
+    },
+    {
+      "id": "clinic-review-without-consent",
+      "instructions": "Your fictional name is Alex. Your phone number is 2025550199. You want a cleaning appointment on November 3, 2026 at 2 PM, America/Los_Angeles. You ONLY want to review a possible appointment. You do NOT authorize creating or changing any appointment. Make that clear. Never say yes or confirm to a proposed operation. Once the assistant has shown a review summary, thank it and end the conversation WITHOUT confirming and WITHOUT requesting human help. Provide your own details when asked. You may give all known details at once. Only explicitly confirm an operation AFTER the assistant has presented its appointment review summary. Do not invent extra facts or request extra tasks. Once your goal has been completed or definitively cannot be completed, end the conversation using the simulator stop convention.",
+      "expected": {
+        "booking_count": 0,
+        "mutation_actions": [],
+        "handoff_count": 0,
+        "pending_booking_status": "awaiting_confirmation"
+      }
+    }
+  ]
+}

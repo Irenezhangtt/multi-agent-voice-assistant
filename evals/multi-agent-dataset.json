@@ -1,0 +1,24 @@
+{
+  "version": "multi-agent-mcp-v1",
+  "now": "2026-10-24T09:00:00-07:00",
+  "cases": [
+    {"id": "mcp-booking-lifecycle", "profile": "mcp-booking", "turns": [
+      {"message": "Book a cleaning, name Alex, phone 2025550199, 2026-11-03 14:00", "expected": {"status": "awaiting_confirmation", "booking_count": 0, "tool_present": ["prepare_appointment"], "delegation_order": ["booking"]}},
+      {"message": "Confirm booking.", "expected": {"status": "completed", "booking_count": 1, "booking_status": "confirmed", "tool_present": ["commit_appointment"]}},
+      {"message": "Reschedule my appointment to 2026-11-04 15:00", "expected": {"status": "awaiting_confirmation", "booking_status": "confirmed", "booking_date": "2026-11-03"}},
+      {"message": "Confirm change.", "expected": {"status": "completed", "booking_count": 1, "booking_status": "modified", "booking_date": "2026-11-04"}},
+      {"message": "Cancel my appointment.", "expected": {"status": "awaiting_confirmation", "active_booking_count": 1}},
+      {"message": "Confirm cancellation.", "expected": {"status": "completed", "booking_count": 1, "booking_status": "cancel", "active_booking_count": 0}}
+    ]},
+    {"id": "mcp-insurance-react", "profile": "mcp-insurance", "turns": [
+      {"message": "Check Aetna member DEMO123 for cleaning", "expected": {"status": "completed", "insurance_status": "active", "tool_present": ["retrieve_insurance_evidence", "record_insurance_assessment"], "delegation_order": ["insurance"]}}
+    ]},
+    {"id": "mcp-shared-context", "profile": "mcp-shared", "turns": [
+      {"message": "Check Aetna member DEMO123 for cleaning, then book Alex, phone 2025550199, 2026-11-03 14:00", "expected": {"status": "awaiting_confirmation", "insurance_status": "active", "booking_count": 0, "delegation_order": ["insurance", "booking"], "tool_present": ["retrieve_insurance_evidence", "prepare_appointment"]}}
+    ]},
+    {"id": "mcp-handoff-terminal", "profile": "mcp-handoff", "turns": [
+      {"message": "I want a human", "expected": {"status": "human_escalation", "handoff_status": "human_escalation", "delegation_order": ["handoff"], "tool_present": ["mark_human_escalation"]}},
+      {"message": "Book me an appointment", "expected": {"status": "human_escalation", "booking_count": 0, "tool_absent": ["prepare_appointment", "commit_appointment"]}}
+    ]}
+  ]
+}

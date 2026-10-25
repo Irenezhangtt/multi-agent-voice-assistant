@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-10-24",
+  "scope": "Public aggregate results from local MVP development; no production reliability claim",
+  "v6_regression": {
+    "local_tests_passed": 89,
+    "includes_optional_tau2_integration": true,
+    "harbor_trials_passed": 12,
+    "harbor_trials_total": 12,
+    "harbor_model_boundary": "scripted; real MCP and SQL",
+    "harbor_snapshot_id": "bb6a19d6271cf0f32b4492c10e105c6032d85495095480d829a8bbd68441f4e1"
+  },
+  "historical_v5_live_cohort": {
+    "original_tau_trials": 16,
+    "judge_cohort_conversations": 19,
+    "business_outcomes_passed": 19,
+    "business_outcomes_total": 19,
+    "booking_success": {
+      "numerator": 5,
+      "denominator": 5,
+      "rate": 1.0
+    },
+    "escalation_markers": {
+      "numerator": 2,
+      "denominator": 19,
+      "rate": 0.10526315789473684
+    },
+    "domain": "project-authored clinic_local; official tau2 simulator; not official leaderboard"
+  },
+  "historical_v5_sandbox_judge": {
+    "model": "claude-sonnet-4-6",
+    "verdicts": {
+      "pass": 16,
+      "needs_review": 3
+    },
+    "mean_quality_score_100": 92.89473684210526,
+    "verified_conversations": 19,
+    "feedback_records": 152,
+    "container_verified": 19,
+    "same_model_family_bias": true,
+    "human_calibrated": false,
+    "scope": "Docker verifier replay of saved real conversation evidence; business agent not rerun",
+    "score_changes_on_same_evidence": 5,
+    "verdict_changes_on_same_evidence": 3
+  },
+  "live_latency_comparison": {
+    "trials_per_version": 1,
+    "input": "Same fictional appointment-review plus independent unknown-insurance request",
+    "excludes": [
+      "STT endpointing",
+      "microphone input",
+      "client network and playback buffering"
+    ],
+    "measurement": "Text input to first Deepgram PCM received by server; not user-perceived end-to-end latency",
+    "baseline": {
+      "model_calls": 6,
+      "first_tts_audio_seconds": 25.016523167025298,
+      "business_complete_seconds": 24.64909133303445,
+      "source_sha256": {
+        "multi_agent.py": "c4d57f28e78d63091ce7373a312300cdbe5b7da34bdf07fe14d3b1feccaf1a77",
+        "voice.py": "cc7cf3cbe3dd0fbab37ff492140edfa6e3f14f2dea307eecaf85d1e5d4bd1f30",
+        "speech.py": "69f19c32d6be5b4752a6998ee839c77ddbb02d30e290416e4f084d3fbfe481ee"
+      }
+    },
+    "v6": {
+      "model_calls": 4,
+      "first_tts_audio_seconds": 7.669290416990407,
+      "business_complete_seconds": 11.21957320801448,
+      "parallel_dispatch": true,
+      "source_sha256": {
+        "multi_agent.py": "3f45a565fe6de37c1e7a9cf6cb24291b28714c3d9cc203e5876b64704ca8c6de",
+        "voice.py": "521ca24f3c236fc5ac0c704e2b61afa4dbb694ab5428832265dce4d60b82f9ef",
+        "speech.py": "6190eafa38e9ff60d0ad154f9111ac6ffd16e612d3bd6d2ce06eb494f66e9640"
+      }
+    }
+  },
+  "phone_telemetry": {
+    "mean_real_call_duration_seconds": null,
+    "real_caller_hangup_rate": null,
+    "reason": "Not measured; text simulator USER_STOP is not an early hangup"
+  },
+  "publication_policy": "Aggregates and selected source hashes only. Credentials, raw transcripts, database files, private Cloud identifiers and absolute machine paths are not included."
+}
